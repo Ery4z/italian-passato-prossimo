@@ -96,10 +96,11 @@ res = find_similar_words(verbi_T[0], target_word, randomness=1)  # Example with 
 
 def run_quiz_rounds(rounds, n_similar):
     score = 0
+    np.random.shuffle(verbi)
 
-    for _ in range(rounds):
+    for k in range(rounds):
         # Randomly choose a verb combination
-        chosen_verb = random.choice(verbi)
+        chosen_verb = verbi[k]
 
         # Randomly decide which form to present (0: Italian Infinitive, 1: Italian Past Participle, 2: French Infinitive)
         present_form_index = random.randint(0, 2)
@@ -107,7 +108,7 @@ def run_quiz_rounds(rounds, n_similar):
 
         # Present the chosen form to the user
         # Colorful output
-        print(f"{Fore.YELLOW}Round {_+1}:")
+        print(f"{Fore.YELLOW}Round {k+1}:")
         
         lookup_type = ["Presente", "Participio Passato","Tradductione"]
 
@@ -162,7 +163,50 @@ def run_quiz_rounds(rounds, n_similar):
 
     print(f"{Fore.CYAN}Your final score is: {score}/{rounds}{Style.RESET_ALL}")
 
+def run_written_quiz_rounds(rounds):
+    score = 0
+    np.random.shuffle(verbi)
+
+    for k in range(rounds):
+        # Randomly choose a verb combination
+        chosen_verb = verbi[k]
+
+        # Randomly decide which form to present (0: Italian Infinitive, 1: Italian Past Participle, 2: French Infinitive)
+        present_form_index = random.randint(0, 2)
+        present_form = chosen_verb[present_form_index]
+
+        # Present the chosen form to the user
+        print(f"{Fore.YELLOW}Round {k+1}:")
+
+        lookup_type = ["Presente", "Participio Passato", "Tradductione"]
+        
+        # The remaining forms that the user needs to guess
+        remaining_forms = [i for i in range(3) if i != present_form_index]
+        
+        # Display the prompt to the user
+        discovered = ["", "", ""]
+        discovered[present_form_index] = present_form
+        print(f"{discovered[0]} | {discovered[1]} | {discovered[2]}")
+
+        for form_type in remaining_forms:
+            user_answer = input(f"Enter the {lookup_type[form_type]} form: ").strip()
+
+            # Check the answer and update the score
+            if user_answer.lower() == chosen_verb[form_type].lower():
+                print(f"{Fore.GREEN}Correct!")
+                score += 1
+            else:
+                print(f"{Fore.RED}Incorrect. The correct answer was: {chosen_verb[form_type]}")
+
+            discovered[form_type] = chosen_verb[form_type]
+
+    print(f"{Fore.CYAN}Your final score is: {score}/{rounds*2} | {score/(rounds*2)}{Style.RESET_ALL}")
+
+
+
+
 # Example usage
 rounds = 30
 n_similar = 5
-run_quiz_rounds(rounds, n_similar)
+#run_quiz_rounds(len(verbi), n_similar)
+run_written_quiz_rounds(len(verbi))
